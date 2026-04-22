@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengumuman Kelulusan Paket C - SKB Balikpapan Utara</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 600px; width: 100%; text-align: center; }
+        .header img { width: 80px; margin-bottom: 15px; } /* Opsional: Tambahkan logo nanti */
+        .header h2 { margin: 0; color: #2c3e50; font-size: 22px; line-height: 1.4; }
+        .header p { color: #7f8c8d; font-size: 14px; margin-top: 5px; margin-bottom: 25px;}
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; color: #34495e; font-weight: bold; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 5px; font-size: 16px; }
+        button { background-color: #2980b9; color: white; border: none; padding: 12px 20px; width: 100%; border-radius: 5px; font-size: 16px; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        button:hover { background-color: #3498db; }
+        #result-container { display: none; margin-top: 30px; text-align: left; padding-top: 20px; border-top: 2px dashed #ecf0f1; }
+        .alert { padding: 15px; border-radius: 5px; text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 18px; }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .motivation { font-size: 14px; font-weight: normal; margin-top: 10px; display: block; font-style: italic;}
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 15px; }
+        table th, table td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+        table th { width: 40%; color: #34495e; }
+        .footer { margin-top: 30px; font-size: 12px; color: #95a5a6; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>Pengumuman Kelulusan Peserta Didik<br>Program Paket C Kelas XII</h2>
+        <p>Tahun Pelajaran 2025 - 2026<br><strong>SKB Balikpapan Utara</strong></p>
+    </div>
+
+    <div class="form-group">
+        <label for="nisn">Masukkan NISN Anda:</label>
+        <input type="text" id="nisn" placeholder="Contoh: 3065775066" autocomplete="off">
+    </div>
+    <button onclick="cekKelulusan()">Cek Hasil</button>
+
+    <div id="result-container">
+        <div id="status-alert" class="alert"></div>
+        
+        <table>
+            <tr><th>Nama</th><td>: <span id="res-nama"></span></td></tr>
+            <tr><th>Tempat, Tanggal Lahir</th><td>: <span id="res-ttl"></span></td></tr>
+            <tr><th>Nama Orang Tua/Wali</th><td>: <span id="res-ortu"></span></td></tr>
+            <tr><th>Nomor Induk</th><td>: <span id="res-no-induk"></span></td></tr>
+            <tr><th>NISN</th><td>: <span id="res-nisn"></span></td></tr>
+            <tr><th>Nilai Rata-Rata</th><td>: <span id="res-nilai"></span></td></tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 SKB Balikpapan Utara
+    </div>
+</div>
+
+<script>
+    // Data Peserta Didik (Sudah dibersihkan dari anomali pemotongan teks)
+    const dataSiswa = [
+        { nama: "Aditya Putra Ramadhan", tempat_lahir: "Balikpapan", tanggal_lahir: "2007-09-16", ortu: "Jessy Eka Prima", no_induk: "C2023.013", nisn: "3065775066", nilai: "79.37", status: "Lulus" },
+        { nama: "Agung Prastiyo", tempat_lahir: "Maridan", tanggal_lahir: "5 Mei 2003", ortu: "Sahrudin Hemadali", no_induk: "C1147", nisn: "0036888033", nilai: "79.91", status: "Lulus" },
+        { nama: "Agus Sutrisno", tempat_lahir: "Balikpapan", tanggal_lahir: "12 Agustus 1985", ortu: "Musadi", no_induk: "C1239", nisn: "3857184941", nilai: "79.76", status: "Lulus" },
+        { nama: "Akbar Ramadhan", tempat_lahir: "Balikpapan", tanggal_lahir: "1 Oktober 2007", ortu: "Darwin", no_induk: "C2023.017", nisn: "0078011218", nilai: "85.08", status: "Lulus" },
+        { nama: "Alvin Suli' Kadang", tempat_lahir: "Tapparan", tanggal_lahir: "2006-04-06", ortu: "Jimmi Kadang", no_induk: "C1236", nisn: "0067633388", nilai: "79.48", status: "Lulus" },
+        { nama: "Andikha Dwi Saputra", tempat_lahir: "Balikpapan", tanggal_lahir: "9 Januari 2004", ortu: "Sunaryo Rujito", no_induk: "C2023.049", nisn: "0044959091", nilai: "85.14", status: "Lulus" },
+        { nama: "Andri", tempat_lahir: "Balikpapan", tanggal_lahir: "4 Agustus 1989", ortu: "Lakori", no_induk: "C1244", nisn: "3894259341", nilai: "54.69", status: "Tidak Lulus" },
+        { nama: "Anisa Desi Deria", tempat_lahir: "Jakarta", tanggal_lahir: "30 Desember 1999", ortu: "Agus Purwanto", no_induk: "C2023.015", nisn: "9999770613", nilai: "79.8", status: "Lulus" },
+        { nama: "Anton Adi Susilo", tempat_lahir: "Ambawang", tanggal_lahir: "15 Agustus 1982", ortu: "Subakri", no_induk: "C2023.010", nisn: "3829896850", nilai: "78.93", status: "Lulus" },
+        { nama: "Ari Murjani", tempat_lahir: "Balikpapan", tanggal_lahir: "23 Februari 1997", ortu: "M. Ghazali A", no_induk: "C2023.016", nisn: "9976741558", nilai: "78.68", status: "Lulus" },
+        { nama: "Arnitha", tempat_lahir: "Berian Baru", tanggal_lahir: "17 Maret 1996", ortu: "Kalvin", no_induk: "C1237", nisn: "3965998956", nilai: "79.73", status: "Lulus" },
+        { nama: "Aswal Iqbal Maulana Putra Kisselly", tempat_lahir: "Balikpapan", tanggal_lahir: "28 Oktober 2006", ortu: "Suharno", no_induk: "C2023.066", nisn: "0062922022", nilai: "77.22", status: "Lulus" },
+        { nama: "Bunari", tempat_lahir: "Balikpapan", tanggal_lahir: "3 Desember 1979", ortu: "Lasigianto", no_induk: "C2023.023", nisn: "3799687830", nilai: "78.2", status: "Lulus" },
+        { nama: "Dimas Ariyo Sigit", tempat_lahir: "Balikpapan", tanggal_lahir: "2006-09-11", ortu: "M. Rusdy", no_induk: "C2023.048", nisn: "0061463502", nilai: "78.72", status: "Lulus" },
+        { nama: "Djutriningsih", tempat_lahir: "Surabaya", tanggal_lahir: "8 Januari 1982", ortu: "Suntoro", no_induk: "C2023.020", nisn: "9821281992", nilai: "79.35", status: "Lulus" },
+        { nama: "Fahrizal", tempat_lahir: "Balikpapan", tanggal_lahir: "25 Oktober 1997", ortu: "Burhanudin", no_induk: "C2023.021", nisn: "9971732624", nilai: "77.81", status: "Lulus" },
+        { nama: "Falih Ubaidillah", tempat_lahir: "Balikpapan", tanggal_lahir: "2006-11-21", ortu: "Bambang Sukirno", no_induk: "C1166", nisn: "0067289778", nilai: "87.1", status: "Lulus" },
+        { nama: "Farrel Rizky Satyawan", tempat_lahir: "Balikpapan", tanggal_lahir: "2 Juni 2007", ortu: "Satyawan Joko", no_induk: "C1231", nisn: "0079160801", nilai: "79.81", status: "Lulus" },
+        { nama: "Gadi Rafa'", tempat_lahir: "Balikpapan", tanggal_lahir: "4 Maret 2008", ortu: "Aspik Hadi", no_induk: "C2023.062", nisn: "0085002871", nilai: "80.87", status: "Lulus" },
+        { nama: "Gerry Tri Laksana", tempat_lahir: "Balikpapan", tanggal_lahir: "15 Agustus 2003", ortu: "Mochammad Imron", no_induk: "C2023.065", nisn: "0036616315", nilai: "79.86", status: "Lulus" },
+        { nama: "Gugun Agung Virizki", tempat_lahir: "Sanipah", tanggal_lahir: "3 Januari 2006", ortu: "Slamat Hariadi.W", no_induk: "C1134", nisn: "0068245832", nilai: "80.19", status: "Lulus" },
+        { nama: "Hariawan Nur Cahyono", tempat_lahir: "Balikpapan", tanggal_lahir: "2 Juni 1998", ortu: "Taswid", no_induk: "C2023.060", nisn: "9985585007", nilai: "79.79", status: "Lulus" },
+        { nama: "Hartati Rusmini", tempat_lahir: "Balikpapan", tanggal_lahir: "8 Oktober 1970", ortu: "Kasdar", no_induk: "C2023.041", nisn: "3700803082", nilai: "78.07", status: "Lulus" },
+        { nama: "Hasbi Maulana Montiro", tempat_lahir: "Kediri", tanggal_lahir: "16 Maret 2006", ortu: "Agus Puspo Anggoro", no_induk: "C2023.009", nisn: "0069290554", nilai: "79.44", status: "Lulus" },
+        { nama: "Henggy Azizan Dodi Rozaqy", tempat_lahir: "Kediri", tanggal_lahir: "23 Juni 2005", ortu: "Gatot Subandi", no_induk: "C1207", nisn: "0051682769", nilai: "86.16", status: "Lulus" },
+        { nama: "Ibrohim", tempat_lahir: "Blitar", tanggal_lahir: "20 Mei 2007", ortu: "Yudi Purwanto", no_induk: "C1248", nisn: "3078057177", nilai: "80.28", status: "Lulus" },
+        { nama: "Iqbal Saputra", tempat_lahir: "Balikpapan", tanggal_lahir: "2006-09-20", ortu: "Rustam", no_induk: "C2023.019", nisn: "0069856143", nilai: "80.37", status: "Lulus" },
+        { nama: "Jainuddin", tempat_lahir: "Bangkalan", tanggal_lahir: "8 Oktober 2004", ortu: "Holik", no_induk: "C2023.053", nisn: "0043905531", nilai: "36.8", status: "Tidak Lulus" },
+        { nama: "La 'Ali", tempat_lahir: "Balikpapan", tanggal_lahir: "22 Mei 1991", ortu: "Arifin", no_induk: "C2023.014", nisn: "3916736740", nilai: "79", status: "Lulus" },
+        { nama: "Lupenta Mandika Putra Sasmanka", tempat_lahir: "Balikpapan", tanggal_lahir: "6 Desember 1986", ortu: "Syabirin Syarkawi", no_induk: "C1139", nisn: "3865902039", nilai: "79.72", status: "Lulus" },
+        { nama: "M. Iqbal Darussalam", tempat_lahir: "Balikpapan", tanggal_lahir: "6 Agustus 2006", ortu: "Sarbani", no_induk: "C2023.031", nisn: "0062831242", nilai: "78.93", status: "Lulus" },
+        { nama: "Mei Nur Azizah", tempat_lahir: "Balikpapan", tanggal_lahir: "5 Mei 2002", ortu: "Kasiyono", no_induk: "C2023.040", nisn: "0020553380", nilai: "80.29", status: "Lulus" },
+        { nama: "Muhammad Akhyar Soviyan", tempat_lahir: "Balikpapan", tanggal_lahir: "21 Mei 2008", ortu: "Dody Soviyan", no_induk: "C2023.039", nisn: "0085800244", nilai: "89.23", status: "Lulus" },
+        { nama: "Muhammad Alwan Ady Rasyidin", tempat_lahir: "Balikpapan", tanggal_lahir: "9 Maret 2006", ortu: "Slamet Adi Sampoerno", no_induk: "C1133", nisn: "0063077779", nilai: "80.34", status: "Lulus" },
+        { nama: "Muhammad Arif", tempat_lahir: "Balikpapan", tanggal_lahir: "1 Mei 1982", ortu: "Badri", no_induk: "C1242", nisn: "3820451850", nilai: "78.29", status: "Lulus" },
+        { nama: "Muhammad Asdar Darwis", tempat_lahir: "Bulukumba", tanggal_lahir: "10 Juli 1980", ortu: "H. Darwis Lonjo. Ba", no_induk: "C1249", nisn: "3800275254", nilai: "79.7", status: "Lulus" },
+        { nama: "Muhammad Iqbaal Tsaabit", tempat_lahir: "Balikpapan", tanggal_lahir: "27 Oktober 2006", ortu: "Abdul Hamid", no_induk: "C1232", nisn: "0068822878", nilai: "79.99", status: "Lulus" },
+        { nama: "Muhammad Irfan", tempat_lahir: "Balikpapan", tanggal_lahir: "2002-04-16", ortu: "Lukman", no_induk: "C2023.003", nisn: "3027983457", nilai: "79.78", status: "Lulus" },
+        { nama: "Muhammad Junior Tegar Syach Bimo", tempat_lahir: "Balikpapan", tanggal_lahir: "1 Juni 2003", ortu: "Marwansyah", no_induk: "C1135", nisn: "0039897014", nilai: "79.78", status: "Lulus" },
+        { nama: "Muhammad Muslih Fauzan", tempat_lahir: "Balikpapan", tanggal_lahir: "2006-11-29", ortu: "Sutoyo", no_induk: "C2023.004", nisn: "0066089161", nilai: "80.5", status: "Lulus" },
+        { nama: "Muhamad Nur Adrian Tegar", tempat_lahir: "Tarakan", tanggal_lahir: "24 Mei 2006", ortu: "Mawar Sukmawati", no_induk: "C2023.028", nisn: "0069531828", nilai: "83.44", status: "Lulus" },
+        { nama: "Muhammad Raji", tempat_lahir: "Pati", tanggal_lahir: "28 Oktober 1978", ortu: "Mulyono", no_induk: "C2023.002", nisn: "3786697700", nilai: "79.04", status: "Lulus" },
+        { nama: "Muhammad Rasya Rahmat Hidayat", tempat_lahir: "Balikpapan", tanggal_lahir: "18 Januari 2008", ortu: "Saiful Yazan", no_induk: "C1209", nisn: "0078145089", nilai: "77.78", status: "Lulus" },
+        { nama: "Muhammad Reza Alkhairi", tempat_lahir: "Balikpapan", tanggal_lahir: "3 Mei 2003", ortu: "Edi Susanto", no_induk: "C1215", nisn: "0035453126", nilai: "78.69", status: "Lulus" },
+        { nama: "Muhammad Rizky Fadhilah", tempat_lahir: "Balikpapan", tanggal_lahir: "26 Juli 2006", ortu: "Alimuddin", no_induk: "C1246", nisn: "0061178452", nilai: "79.61", status: "Lulus" },
+        { nama: "Muhammad Taufan Hakim", tempat_lahir: "Balikpapan", tanggal_lahir: "26 Agustus 2006", ortu: "Darmansyah", no_induk: "C1224", nisn: "0068631744", nilai: "78.38", status: "Lulus" },
+        { nama: "Muhammad Zqa Althaf", tempat_lahir: "Balikpapan", tanggal_lahir: "9 Januari 2007", ortu: "Tri Yossianto", no_induk: "C2023.051", nisn: "9821803130", nilai: "79.8", status: "Lulus" },
+        { nama: "Nabiel Al Rasyid", tempat_lahir: "Balikpapan", tanggal_lahir: "30 Maret 2003", ortu: "Taufik", no_induk: "C1222", nisn: "0031716893", nilai: "79.26", status: "Lulus" },
+        { nama: "Nabila Haafidzah", tempat_lahir: "Balikpapan", tanggal_lahir: "1 Juni 2006", ortu: "Saiful Anwar", no_induk: "C1143", nisn: "0063456522", nilai: "79.09", status: "Lulus" },
+        { nama: "Nabila Nur Alifa", tempat_lahir: "Balikpapan", tanggal_lahir: "6 Januari 2007", ortu: "H. Djuhransyah", no_induk: "C1190", nisn: "0071014932", nilai: "78.68", status: "Lulus" },
+        { nama: "Nailatus Sa'Adah", tempat_lahir: "Jember", tanggal_lahir: "21 Juni 2005", ortu: "Slamet", no_induk: "C2023.034", nisn: "0052816015", nilai: "78.32", status: "Lulus" },
+        { nama: "Najwa Bulqis Salsabil", tempat_lahir: "Balikpapan", tanggal_lahir: "28 Mei 2007", ortu: "Mohamad Laim", no_induk: "C1245", nisn: "0078850410", nilai: "85.82", status: "Lulus" },
+        { nama: "Nia Ramadani", tempat_lahir: "Balikpapan", tanggal_lahir: "11 Oktober 2006", ortu: "Rusli", no_induk: "C2023.037", nisn: "0061437904", nilai: "88.25", status: "Lulus" },
+        { nama: "Noer Aini", tempat_lahir: "Surabaya", tanggal_lahir: "17 Desember 1980", ortu: "Soentoro", no_induk: "C2023.012", nisn: "9805473017", nilai: "78.96", status: "Lulus" },
+        { nama: "Noorliani", tempat_lahir: "Balikpapan", tanggal_lahir: "8 Maret 1977", ortu: "Yuriansyah", no_induk: "C1238", nisn: "3771074446", nilai: "78.13", status: "Lulus" },
+        { nama: "Nu'Aim Ajas Rowi", tempat_lahir: "Balikpapan", tanggal_lahir: "26 Maret 2006", ortu: "Muhammad Aras Kaseng", no_induk: "C1189", nisn: "0068442958", nilai: "80.47", status: "Lulus" },
+        { nama: "Nur Hadijah", tempat_lahir: "Balikpapan", tanggal_lahir: "31 Desember 2004", ortu: "Roy", no_induk: "C1192", nisn: "0045259268", nilai: "80.61", status: "Lulus" },
+        { nama: "Nur Rahmat Maulana", tempat_lahir: "Balikpapan", tanggal_lahir: "16 Mei 2007", ortu: "Danuri", no_induk: "C1225", nisn: "0076442277", nilai: "77.34", status: "Lulus" },
+        { nama: "Princess Estetic Nirvana", tempat_lahir: "Balikpapan", tanggal_lahir: "2007-09-27", ortu: "Suharto", no_induk: "C2023.001", nisn: "0071009968", nilai: "87.27", status: "Lulus" },
+        { nama: "Quinn Nasya Cetta Raniya", tempat_lahir: "Malang", tanggal_lahir: "2 Mei 2008", ortu: "Indhra Mahardika", no_induk: "C2023.047", nisn: "0087017594", nilai: "80.43", status: "Lulus" },
+        { nama: "Rafli Al-Ghifari", tempat_lahir: "Jakarta", tanggal_lahir: "2004-11-14", ortu: "Agus Purwanto", no_induk: "C2023.035", nisn: "0049597043", nilai: "79.77", status: "Lulus" },
+        { nama: "Ras Budiono", tempat_lahir: "Batang", tanggal_lahir: "6 Mei 1996", ortu: "Sahroni", no_induk: "C2023.045", nisn: "3968210455", nilai: "79.27", status: "Lulus" },
+        { nama: "Rezky Hidayat", tempat_lahir: "Sinjai", tanggal_lahir: "8 Maret 2008", ortu: "Asdi", no_induk: "C1234", nisn: "0087067323", nilai: "78.63", status: "Lulus" },
+        { nama: "Ridho Andi Rasya", tempat_lahir: "Balikpapan", tanggal_lahir: "3 Mei 2007", ortu: "Ramli", no_induk: "C2023.055", nisn: "0075949317", nilai: "55.63", status: "Tidak Lulus" },
+        { nama: "Riski Rahmawan", tempat_lahir: "Balikpapan", tanggal_lahir: "11 Mei 1994", ortu: "Agus Karsono", no_induk: "C1247", nisn: "3943139462", nilai: "79.49", status: "Lulus" },
+        { nama: "Riyu Febrian", tempat_lahir: "Balikpapan", tanggal_lahir: "16 Februari 2003", ortu: "Hari Santoso", no_induk: "C2023.006", nisn: "0031105047", nilai: "81.52", status: "Lulus" },
+        { nama: "Safitri Puspita Ramadhina", tempat_lahir: "Balikpapan", tanggal_lahir: "13 Oktober 2006", ortu: "Moch Chotolillah", no_induk: "C1233", nisn: "0065139298", nilai: "84.39", status: "Lulus" },
+        { nama: "Salvia Adinata Haryani", tempat_lahir: "Balikpapan", tanggal_lahir: "26 Oktober 2008", ortu: "Hariyono", no_induk: "C1213", nisn: "0089901039", nilai: "86.63", status: "Lulus" },
+        { nama: "Samsiah", tempat_lahir: "Balikpapan", tanggal_lahir: "7 Oktober 1967", ortu: "Ismail", no_induk: "C2023.018", nisn: "9676688563", nilai: "79.72", status: "Lulus" },
+        { nama: "Sashi Khalidyah Ramadhanti", tempat_lahir: "Balikpapan", tanggal_lahir: "14 Oktober 2006", ortu: "Hary Sasmaya", no_induk: "C2023.029", nisn: "3069432927", nilai: "80.64", status: "Lulus" },
+        { nama: "Shafwatullah", tempat_lahir: "Sinjai", tanggal_lahir: "31 Oktober 1993", ortu: "Abdul Malik", no_induk: "C1227", nisn: "3931031126", nilai: "79.96", status: "Lulus" },
+        { nama: "Sidiq Guruh Prayoga", tempat_lahir: "Gunung Kidul", tanggal_lahir: "20 Oktober 2000", ortu: "Sugianto", no_induk: "C1229", nisn: "0009728174", nilai: "80.31", status: "Lulus" },
+        { nama: "Siti Nuraini", tempat_lahir: "Wonosari", tanggal_lahir: "1 Mei 2007", ortu: "Lasimun", no_induk: "C1223", nisn: "0078306812", nilai: "84.77", status: "Lulus" },
+        { nama: "Sumarni", tempat_lahir: "Balikpapan", tanggal_lahir: "17 Desember 2004", ortu: "La Ode Hasan", no_induk: "C2023.052", nisn: "0045813627", nilai: "79.48", status: "Lulus" },
+        { nama: "Surianti", tempat_lahir: "Pangkep", tanggal_lahir: "29 Desember 1987", ortu: "Abdullah", no_induk: "C2023.011", nisn: "3879796342", nilai: "77.43", status: "Lulus" },
+        { nama: "Sutarno", tempat_lahir: "Jember", tanggal_lahir: "19 Agustus 1973", ortu: "Masrip", no_induk: "C2023.024", nisn: "3730010389", nilai: "79.29", status: "Lulus" },
+        { nama: "Syam Prayitno", tempat_lahir: "Balikpapan", tanggal_lahir: "25 Juni 2007", ortu: "Simun Haryono", no_induk: "C1240", nisn: "0073018692", nilai: "80.12", status: "Lulus" },
+        { nama: "Syarifah Mauritchia", tempat_lahir: "Balikpapan", tanggal_lahir: "2005-04-04", ortu: "Rudiansyah", no_induk: "C2023.058", nisn: "0052338221", nilai: "82.04", status: "Lulus" },
+        { nama: "Syawal Fadlullah", tempat_lahir: "Balikpapan", tanggal_lahir: "16 Oktober 2008", ortu: "Mohammad Fadlun", no_induk: "C2023.022", nisn: "0081072289", nilai: "81.32", status: "Lulus" },
+        { nama: "Umi Kalsum", tempat_lahir: "Balikpapan", tanggal_lahir: "12 Februari 2006", ortu: "Hamidi", no_induk: "C1226", nisn: "0064200141", nilai: "80.61", status: "Lulus" },
+        { nama: "Wahyu Samudra", tempat_lahir: "Banyuwangi", tanggal_lahir: "23 Januari 2004", ortu: "Suwito", no_induk: "C2023.033", nisn: "0045399352", nilai: "79.35", status: "Lulus" },
+        { nama: "Wasna Riski Wulandari", tempat_lahir: "Balikpapan", tanggal_lahir: "2006-09-07", ortu: "Mudjiadi", no_induk: "C1228", nisn: "0063209288", nilai: "78.33", status: "Lulus" },
+        { nama: "Yogi Dwi Ananto", tempat_lahir: "Balikpapan", tanggal_lahir: "4 Juni 1999", ortu: "Sugito", no_induk: "C2023.007", nisn: "3999434261", nilai: "78.21", status: "Lulus" },
+        { nama: "Yuniar Ramadhani", tempat_lahir: "Balikpapan", tanggal_lahir: "2005-11-01", ortu: "Yusmalinar", no_induk: "C2023.061", nisn: "0054496030", nilai: "79.03", status: "Lulus" },
+        { nama: "Zakia Khoinur Ramadhani", tempat_lahir: "Balikpapan", tanggal_lahir: "8 Oktober 2007", ortu: "Abdul Muis", no_induk: "C1157", nisn: "0075026669", nilai: "80.63", status: "Lulus" }
+    ];
+
+    function cekKelulusan() {
+        const inputNisn = document.getElementById('nisn').value.trim();
+        const resultContainer = document.getElementById('result-container');
+        const statusAlert = document.getElementById('status-alert');
+
+        if (inputNisn === '') {
+            alert("Silakan masukkan NISN Anda terlebih dahulu.");
+            return;
+        }
+
+        // Cari data siswa berdasarkan NISN
+        const siswa = dataSiswa.find(s => s.nisn === inputNisn);
+
+        if (siswa) {
+            // Tampilkan container
+            resultContainer.style.display = 'block';
+
+            // Isi tabel data
+            document.getElementById('res-nama').innerText = siswa.nama;
+            document.getElementById('res-ttl').innerText = `${siswa.tempat_lahir}, ${siswa.tanggal_lahir}`;
+            document.getElementById('res-ortu').innerText = siswa.ortu;
+            document.getElementById('res-no-induk').innerText = siswa.no_induk;
+            document.getElementById('res-nisn').innerText = siswa.nisn;
+            document.getElementById('res-nilai').innerText = siswa.nilai;
+
+            // Logika kelulusan
+            if (siswa.status.toLowerCase() === 'lulus') {
+                statusAlert.className = 'alert alert-success';
+                statusAlert.innerHTML = '🎉 Selamat, Anda LULUS!';
+            } else {
+                statusAlert.className = 'alert alert-danger';
+                statusAlert.innerHTML = 'Maaf, Anda belum memenuhi kriteria kelulusan.<br><span class="motivation">"Tetap semangat dan jangan menyerah! Setiap kegagalan adalah pelajaran berharga untuk melangkah lebih kuat di masa depan. Teruslah berjuang dalam pendidikan Anda!"</span>';
+            }
+        } else {
+            resultContainer.style.display = 'none';
+            alert("Data tidak ditemukan. Pastikan NISN yang dimasukkan sudah benar.");
+        }
+    }
+
+    // Memungkinkan user menekan "Enter" pada keyboard untuk submit
+    document.getElementById("nisn").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            cekKelulusan();
+        }
+    });
+</script>
+
+</body>
+</html>
